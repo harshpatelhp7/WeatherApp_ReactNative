@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import * as Location from "expo-location";
 import WeatherData from "./components/WeatherData";
 
@@ -14,11 +14,10 @@ export default function App() {
   const [city, setCity] = useState("null");
 
   useEffect(() => {
-    load();
-  },[]);
-  
+    initialRun();
+  }, []);
 
-  async function load() {
+  async function initialRun() {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -27,6 +26,7 @@ export default function App() {
       }
       const location = await Location.getCurrentPositionAsync();
       const { latitude, longitude } = location.coords;
+
       const weatherUrl = `${BASE_WEATHER_ONECALLAPI_URL}lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
       const cityUrl = `${BASE_WEATHER_API_URL}lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
 
@@ -38,9 +38,8 @@ export default function App() {
       if (response.ok && res2.ok) {
         setWeeklyWeather(result);
         setCity(result4Ct);
-       
       } else {
-        setErrorMessage("Oops, not able to Fetch Weather Currently. Sorry!");
+        setErrorMessage("Oops, not able to Fetch Weather at this time. Sorry!");
       }
     } catch (err) {
       console.log(err);
@@ -50,13 +49,11 @@ export default function App() {
   if (weeklyWeather) {
     let props = {
       weeklyWeather,
-      city
-    }
+      city,
+    };
     return (
       <View style={styles.container}>
         <WeatherData {...props} />
-        
-
         <StatusBar style="auto" />
       </View>
     );
@@ -75,5 +72,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "center",
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 50,
+    width: 200,
+    borderColor: "green",
   },
 });
