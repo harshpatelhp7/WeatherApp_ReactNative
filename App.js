@@ -2,17 +2,21 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
+import WeatherData from "./components/WeatherData";
 
-const API_KEY = "8349ba0aa4ad1047dfa252615610a0eb";
+const API_KEY = "db6e47f051cfa2045c8c2ae9b8e75418";
 const BASE_WEATHER_ONECALLAPI_URL = `https://api.openweathermap.org/data/2.5/onecall?`;
+const BASE_WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?`;
 
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
-  const [currentWeather, setCurrentWeather] = useState(null);
+  const [weeklyWeather, setWeeklyWeather] = useState(null);
+  const [city, setCity] = useState("null");
 
   useEffect(() => {
     load();
-  }, []);
+  },[]);
+  
 
   async function load() {
     try {
@@ -23,37 +27,36 @@ export default function App() {
       }
       const location = await Location.getCurrentPositionAsync();
       const { latitude, longitude } = location.coords;
-      console.log(latitude + " " + longitude)
       const weatherUrl = `${BASE_WEATHER_ONECALLAPI_URL}lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
+      const cityUrl = `${BASE_WEATHER_API_URL}lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
 
       const response = await fetch(weatherUrl);
+      const res2 = await fetch(cityUrl);
+
       const result = await response.json();
-      if (response.ok) {
-        setCurrentWeather(result);
+      const result4Ct = await res2.json();
+      if (response.ok && res2.ok) {
+        setWeeklyWeather(result);
+        setCity(result4Ct);
+       
       } else {
-        setErrorMessage("Not valid weather call");
+        setErrorMessage("Oops, not able to Fetch Weather Currently. Sorry!");
       }
     } catch (err) {
       console.log(err);
     }
   }
 
-  if (currentWeather) {
-    const {
-      current: { temp, feels_like },
-    } = currentWeather;
+  if (weeklyWeather) {
+    let props = {
+      weeklyWeather,
+      city
+    }
     return (
       <View style={styles.container}>
-        <Text>
-          {" "}
-          {parseFloat(temp - 273.15).toFixed(1)}
-          &deg;C{" "}
-        </Text>
-        <Text>
-          Feels Like &nbsp;
-          {parseFloat(feels_like - 273.15).toFixed(1)}
-          &deg;C
-        </Text>
+        <WeatherData {...props} />
+        
+
         <StatusBar style="auto" />
       </View>
     );
@@ -69,7 +72,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#4287f5",
+    backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "center",
   },
