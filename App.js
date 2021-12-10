@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import * as Location from "expo-location";
 import WeatherData from "./components/WeatherData";
 
-const API_KEY = "db6e47f051cfa2045c8c2ae9b8e75418";
+const API_KEY = "";
 const BASE_WEATHER_ONECALLAPI_URL = `https://api.openweathermap.org/data/2.5/onecall?`;
 const BASE_WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?`;
 
