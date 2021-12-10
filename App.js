@@ -30,6 +30,10 @@ export default function App() {
       const weatherUrl = `${BASE_WEATHER_ONECALLAPI_URL}lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
       const cityUrl = `${BASE_WEATHER_API_URL}lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
 
+      if (API_KEY == "") {
+        console.log("Make sure API key is available.")
+      }
+
       const response = await fetch(weatherUrl);
       const res2 = await fetch(cityUrl);
 
